@@ -2,6 +2,7 @@ package next.controller.user;
 
 import javax.servlet.http.HttpSession;
 
+import core.web.annotation.LoginUser;
 import next.controller.UserSessionUtils;
 import next.dao.UserDao;
 import next.model.User;
@@ -21,16 +22,16 @@ public class UserController {
 
 	private UserDao userDao = UserDao.getInstance();
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
-    public String index(HttpSession session, Model model) throws Exception {
-		if (!UserSessionUtils.isLogined(session)) {
-			return "redirect:/users/loginForm";
-		}
-		
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public String index(@LoginUser User loginUser, Model model) throws Exception {
+        if (loginUser.isGuestUser()) {
+            return "redirect:/users/loginForm";
+        }
+
         model.addAttribute("users", userDao.findAll());
         return "/user/list";
     }
-    
+
     @RequestMapping(value = "/{userId}", method = RequestMethod.GET)
     public String profile(@PathVariable String userId, Model model) throws Exception {
     	model.addAttribute("user", userDao.findByUserId(userId));

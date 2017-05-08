@@ -111,4 +111,17 @@ public class User {
 	public String toString() {
 		return "User [userId=" + userId + ", name=" + name + ", email=" + email + "]";
 	}
+
+    public boolean isGuestUser() {
+		return false;
+    }
+
+    public static GuestUser GUEST = new GuestUser();
+
+    static class GuestUser extends User {
+		@Override
+		public boolean isGuestUser() {
+			return true;
+		}
+	}
 }
