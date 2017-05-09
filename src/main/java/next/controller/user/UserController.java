@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSession;
 import core.web.annotation.LoginUser;
 import next.controller.UserSessionUtils;
 import next.dao.UserDao;
+import next.exception.UnAuthorizedException;
 import next.model.User;
 
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class UserController {
     public String updateForm(@LoginUser User loginUser, @PathVariable String userId, Model model) throws Exception {
         final User user = userDao.findByUserId(userId);
         if (!user.isSameUser(loginUser)) {
-            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+            throw new UnAuthorizedException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         model.addAttribute("user", user);
         return "/user/updateForm";
@@ -64,7 +65,7 @@ public class UserController {
     public String update(@LoginUser User loginUser, @PathVariable String userId, User newUser) throws Exception {
         User user = userDao.findByUserId(userId);
         if (!loginUser.isSameUser(user)) {
-            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+            throw new UnAuthorizedException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         
         log.debug("Update User : {}", newUser);

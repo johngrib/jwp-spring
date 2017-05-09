@@ -2,6 +2,7 @@ package next.controller.qna;
 
 import javax.servlet.http.HttpSession;
 
+import next.exception.UnAuthorizedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,7 +54,7 @@ public class QuestionController {
 		
 		Question question = qnaService.findById(questionId);
 		if (!question.isSameUser(UserSessionUtils.getUserFromSession(session))) {
-			throw new IllegalStateException("다른 사용자가 쓴 글을 수정할 수 없습니다.");
+			throw new UnAuthorizedException("다른 사용자가 쓴 글을 수정할 수 없습니다.");
 		}
 		model.addAttribute("question", question);
 		return "/qna/update";
