@@ -49,30 +49,22 @@ public class UserController {
         userDao.insert(user);
 		return "redirect:/";
 	}
-    
+
     @RequestMapping(value = "/{userId}/edit", method = RequestMethod.GET)
-	public String updateForm(HttpSession session, @PathVariable String userId, Model model) throws Exception {
-    	if (!UserSessionUtils.isLogined(session)) {
-			return "redirect:/users/loginForm";
-		}
-    	
-    	User user = userDao.findByUserId(userId);
-    	if (!UserSessionUtils.getUserFromSession(session).isSameUser(user)) {
-        	throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+    public String updateForm(@LoginUser User loginUser, @PathVariable String userId, Model model) throws Exception {
+        final User user = userDao.findByUserId(userId);
+        if (!user.isSameUser(loginUser)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
-    	model.addAttribute("user", user);
-    	return "/user/updateForm";
-	}
-    
+        model.addAttribute("user", user);
+        return "/user/updateForm";
+    }
+
     @RequestMapping(value = "/{userId}", method = RequestMethod.PUT)
-	public String update(HttpSession session, @PathVariable String userId, User newUser) throws Exception {
-    	if (!UserSessionUtils.isLogined(session)) {
-			return "redirect:/users/loginForm";
-		}
-    	
-    	User user = userDao.findByUserId(userId);
-    	if (!UserSessionUtils.getUserFromSession(session).isSameUser(user)) {
-        	throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
+    public String update(@LoginUser User loginUser, @PathVariable String userId, User newUser) throws Exception {
+        User user = userDao.findByUserId(userId);
+        if (!loginUser.isSameUser(user)) {
+            throw new IllegalStateException("다른 사용자의 정보를 수정할 수 없습니다.");
         }
         
         log.debug("Update User : {}", newUser);
