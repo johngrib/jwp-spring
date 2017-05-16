@@ -9,18 +9,13 @@ import core.jdbc.JdbcTemplate;
 import core.jdbc.RowMapper;
 
 public class JdbcUserDao implements UserDao {
+
 	private static JdbcUserDao userDao;
+
 	private JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
-	
+
 	private JdbcUserDao() {}
-	
-//	public static UserDao getInstance() {
-//		if (userDao == null) {
-//			userDao = new UserDao();
-//		}
-//		return userDao;
-//	}
-	
+
     @Override
     public void insert(User user) {
         String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";

@@ -13,20 +13,15 @@ import core.jdbc.PreparedStatementCreator;
 import core.jdbc.RowMapper;
 import next.model.Question;
 
-public class QuestionDao {
-	private static QuestionDao questionDao;
+public class JdbcQuestionDao implements QuestionDao {
+
+	private static JdbcQuestionDao jdbcQuestionDao;
 	private JdbcTemplate jdbcTemplate = JdbcTemplate.getInstance();
 	
-	private QuestionDao() {}
-	
-	public static QuestionDao getInstance() {
-		if (questionDao == null) {
-			questionDao = new QuestionDao();
-		}
-		return questionDao;
-	}
-	
-    public Question insert(Question question) {
+	private JdbcQuestionDao() {}
+
+	@Override
+	public Question insert(Question question) {
         String sql = "INSERT INTO QUESTIONS (writer, title, contents, createdDate) VALUES (?, ?, ?, ?)";
         PreparedStatementCreator psc = new PreparedStatementCreator() {
 			@Override
@@ -45,6 +40,7 @@ public class QuestionDao {
         return findById(keyHolder.getId());
     }
 	
+	@Override
 	public List<Question> findAll() {
 		String sql = "SELECT questionId, writer, title, createdDate, countOfAnswer FROM QUESTIONS "
 				+ "order by questionId desc";
@@ -63,6 +59,7 @@ public class QuestionDao {
 		return jdbcTemplate.query(sql, rm);
 	}
 
+	@Override
 	public Question findById(long questionId) {
 		String sql = "SELECT questionId, writer, title, contents, createdDate, countOfAnswer FROM QUESTIONS "
 				+ "WHERE questionId = ?";
@@ -81,6 +78,7 @@ public class QuestionDao {
 		return jdbcTemplate.queryForObject(sql, rm, questionId);
 	}
 
+	@Override
 	public void update(Question question) {
 		String sql = "UPDATE QUESTIONS set title = ?, contents = ? WHERE questionId = ?";
         jdbcTemplate.update(sql, 
@@ -89,11 +87,13 @@ public class QuestionDao {
                 question.getQuestionId());
 	}
 
+	@Override
 	public void delete(long questionId) {
 		String sql = "DELETE FROM QUESTIONS WHERE questionId = ?";
 		jdbcTemplate.update(sql, questionId);
 	}
 
+	@Override
 	public void updateCountOfAnswer(long questionId) {
 		String sql = "UPDATE QUESTIONS set countOfAnswer = countOfAnswer + 1 WHERE questionId = ?";
 		jdbcTemplate.update(sql, questionId);
