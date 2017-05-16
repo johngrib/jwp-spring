@@ -21,7 +21,11 @@ import core.web.argumentresolver.LoginUser;
 public class UserController {
 	private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
-	private UserDao userDao = UserDao.getInstance();
+	private UserDao userDao;
+
+	public UserController(UserDao userDao) {
+	    this.userDao = userDao;
+    }
 
 	@RequestMapping(value = "", method = RequestMethod.GET)
     public String index(@LoginUser User loginUser, Model model) throws Exception {
